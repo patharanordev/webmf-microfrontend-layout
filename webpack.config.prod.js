@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 const deps = require("./package.json").dependencies;
 module.exports = (_, argv) => ({
   output: {
-    publicPath: "http://localhost:8580/",
+    publicPath: "https://webmf-microfrontend-layout.vercel.app/",
   },
 
   resolve: {
@@ -44,8 +44,8 @@ module.exports = (_, argv) => ({
       name: "layout",
       filename: "remoteEntry.js",
       remotes: {
-        content1: `content1@http://localhost:8581/remoteEntry.js`,
-        content2: `content2@http://localhost:8582/remoteEntry.js`
+        content1: `content1@https://webmf-microfrontend-content1.vercel.app/remoteEntry.js`,
+        content2: `content2@https://webmf-microfrontend-content2.vercel.app/remoteEntry.js`
       },
       exposes: {},
       shared: {

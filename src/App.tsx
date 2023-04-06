@@ -12,7 +12,7 @@ const App = () => (
     <div>Language: TypeScript</div>
     <div>CSS: Tailwind</div>
 
-    <div class="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-4">
       <div className="">
         <Area1 />
       </div>
