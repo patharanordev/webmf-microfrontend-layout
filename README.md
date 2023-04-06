@@ -1,6 +1,8 @@
 # webmf-microfrontend-layout
 Build micro-frontend to serve main layout by using module federation (webpack5) style.
 
+![ss](assets/ss.png)
+
 ## Requirements
 
 - Content area #1 : https://github.com/patharanordev/webmf-microfrontend-content1
