@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import "./index.scss";
+import ExampleInAppNotification from "./components/Example";
 import Area1 from "content1/Area1";
 import Area2 from "content2/Area2";
 
@@ -18,6 +19,9 @@ const App = () => (
       </div>
       <div className="col-span-2">
         <Area2 />
+      </div>
+      <div className="col-span-12">
+        <ExampleInAppNotification />
       </div>
     </div>
   </div>

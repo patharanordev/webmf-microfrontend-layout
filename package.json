@@ -1,6 +1,6 @@
 {
   "name": "layout",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build": "webpack --mode production --config=webpack.config.prod.js",
     "build:dev": "webpack --mode development",
