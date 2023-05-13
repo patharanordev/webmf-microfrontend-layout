@@ -1,6 +1,7 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 
 const deps = require("./package.json").dependencies;
 
@@ -68,5 +69,8 @@ module.exports = (_, argv) => ({
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
+    new Dotenv({
+      systemvars: true
+    })
   ],
 });
