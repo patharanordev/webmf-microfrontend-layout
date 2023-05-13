@@ -22,7 +22,7 @@ const firebaseConfig: FirebaseOptions = {
 const app = initializeApp(firebaseConfig);
 
 // FCM
-const SUBSCRIBED_MSG_TOPIC = 'Test FCM';
+const SUBSCRIBED_MSG_TOPIC = 'TestFCM';
 const messaging = getMessaging(app);
 const isTokenSentToServer = () => {
     return window.localStorage.getItem('sentToServer') === '1';
@@ -50,20 +50,7 @@ async function initFCM() {
 
     if(token.data) {
         await sendTokenToServer(token.data);
-
-        onMessage(messaging, (payload: any) => {
-            console.log('Message received. ', payload);
-            
-            // Show the notification
-            const notificationTitle = payload.notification.title;
-            const notificationOptions = {
-                body: payload.notification.body,
-                icon: payload.notification.icon,
-            };
-            
-            // Show the notification
-            new Notification(notificationTitle, notificationOptions);
-        });
+        await subscribeToTopic(SUBSCRIBED_MSG_TOPIC, token.data)
     } else {
         console.log(token.error)
     }
@@ -83,19 +70,57 @@ function deleteFCMToken() {
     });
 }
 
+
+const onMessageListener = () => new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+        resolve(payload);
+    });
+});
+
+const subscribeToTopic = async (topic: string, token: string) => {
+    // Subscribe to the topic, requires Cloud Messaging API (Legacy) enabled.
+    // Ref. https://console.cloud.google.com/apis/library/googlecloudmessaging.googleapis.com?authuser=0&project=766275633550&hl=en
+    const topicURL: string = `https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topic}`;
+
+    const headers = new Headers();
+    headers.append('content-type', 'application/json');
+    headers.append('Authorization', `key=${process.env.REACT_APP_FIREBASE_CM_API_LEGACY}`);
+
+    const response = await fetch(topicURL, { method: 'POST', headers })
+    .then((r) => ({ data: r, error: null }))
+    .catch((e) => ({ data: null, error: e }))
+
+    console.log('subscribeToTopic:', response)
+
+    return response;
+}
+
 // Request notification permissions from the user
 async function requestNotificationPermission() {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
+    if (!('Notification' in window)) {
+        // Check if the browser supports notifications
+        alert('This browser does not support desktop notification');
+    } else if (Notification.permission === 'granted') {
+        new Notification('Welcome');
         await initFCM();
-    } else {
-        console.log('Unable to get permission to notify.');
+    } else if (Notification.permission !== 'denied') {
+        // We need to ask the user for permission
+        Notification.requestPermission().then(async (permission) => {
+            // If the user accepts, let's create a notification
+            if (permission === 'granted') {
+                await initFCM();
+            } else {
+                console.log('Unable to get permission to notify.');
+            }
+        });
     }
 }
 
 export {
     app,
     messaging,
+    subscribeToTopic,
+    onMessageListener,
     onMessage,
     deleteFCMToken,
     requestNotificationPermission
