@@ -39,7 +39,7 @@ const sendTokenToServer = async (currentToken: any) => {
             'unless it changes');
     }
 };
-async function initFCM(topic:string) {
+async function initFCM() {
     const token = await getToken(messaging, { vapidKey:process.env.FIREBASE_VAPID_KEY })
     .then((currentToken: any) => {
         console.log('current token:', currentToken)
@@ -50,6 +50,20 @@ async function initFCM(topic:string) {
 
     if(token.data) {
         await sendTokenToServer(token.data);
+
+        onMessage(messaging, (payload: any) => {
+            console.log('Message received. ', payload);
+            
+            // Show the notification
+            const notificationTitle = payload.notification.title;
+            const notificationOptions = {
+                body: payload.notification.body,
+                icon: payload.notification.icon,
+            };
+            
+            // Show the notification
+            new Notification(notificationTitle, notificationOptions);
+        });
     } else {
         console.log(token.error)
     }
@@ -63,7 +77,7 @@ function deleteFCMToken() {
         setTokenSentToServer(false);
         // Once token is deleted update UI.
         
-        await initFCM(SUBSCRIBED_MSG_TOPIC);
+        await initFCM();
     }).catch((err: any) => {
         console.log('Unable to delete token. ', err);
     });
@@ -73,13 +87,11 @@ function deleteFCMToken() {
 async function requestNotificationPermission() {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-        await initFCM(SUBSCRIBED_MSG_TOPIC);
+        await initFCM();
     } else {
         console.log('Unable to get permission to notify.');
     }
 }
-
-requestNotificationPermission();
 
 export {
     app,

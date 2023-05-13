@@ -2,28 +2,12 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import "./index.scss";
-import { messaging, onMessage } from "./configs/firebase";
 import ExampleInAppNotification from "./components/ExampleInAppNotification";
+import ExampleFCM from "./components/ExampleFCM";
 import Area1 from "content1/Area1";
 import Area2 from "content2/Area2";
 
 const App = () => {
-
-  useEffect(() => {
-    onMessage(messaging, (payload: any) => {
-      console.log('Message received. ', payload);
-      
-      // Show the notification
-      const notificationTitle = payload.notification.title;
-      const notificationOptions = {
-          body: payload.notification.body,
-          icon: payload.notification.icon,
-      };
-      
-      // Show the notification
-      new Notification(notificationTitle, notificationOptions);
-    });
-  }, [messaging]);
 
   return (
     <div className="mt-10 text-3xl mx-auto max-w-6xl">
@@ -41,6 +25,7 @@ const App = () => {
         </div>
         <div className="col-span-12">
           <ExampleInAppNotification />
+          <ExampleFCM />
         </div>
       </div>
     </div>
