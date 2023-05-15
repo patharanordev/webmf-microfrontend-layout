@@ -16,6 +16,13 @@ function ExampleFCM() {
     requestNotificationPermission();
   }, []);
 
+  useEffect(() => {
+    new Notification(notification.title, {
+      body: notification.body,
+      // icon: './img/goodday.png'
+    });
+  }, [notification]);
+
   return (
     <div>
       
