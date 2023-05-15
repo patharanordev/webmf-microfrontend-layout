@@ -7,7 +7,7 @@ const deps = require("./package.json").dependencies;
 
 module.exports = (_, argv) => ({
   output: {
-    publicPath: "https://webmf-microfrontend-layout.vercel.app/",
+    publicPath: "/",
   },
 
   resolve: {
