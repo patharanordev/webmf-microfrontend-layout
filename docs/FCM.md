@@ -25,6 +25,8 @@ Web application need send the token to server side to identify current client *(
 
 In server side, microservice will sending message to client based on the token.
 
+> **IMPORTANT**: In client side requires service worker file name  `firebase-messaging-sw.js`, it can handle notification message when user minimize browser or changed tab.
+
 ### **Example Initial/Config FCM**
 
 > Ref. [Initial/Config FCM](../src/configs/firebase.ts).
@@ -238,7 +240,7 @@ export {
 }
 ```
 
-Usage :
+### **Example Frontend**
 
 ```tsx
 import { requestNotificationPermission, onMessageListener } from '../configs/firebase';
@@ -269,4 +271,154 @@ function ExampleFCM() {
 }
 
 export default ExampleFCM;
+```
+
+Example received payload :
+
+![ex-received-payload](../assets/ex-received-payload.png)
+
+### **Example Backend**
+
+In backend service, you need to use `firebase-admin` to send :
+
+* Data
+   - Based on `token`, it requires payload's schema : 
+        ```ts
+        interface { 
+            token: string;
+            data: { 
+                [x: string]: string
+            }
+        }
+        ```
+   - Based on `topic`, it requires payload's schema : 
+        ```ts
+        interface { 
+            topic: string;
+            data: {
+                [x: string]: string
+            }
+        }
+        ```
+* Notification
+   - Based on `token`, it requires payload's schema : 
+
+        ```ts
+        interface {
+            token: string;
+            notification: {
+                title: string;
+                body: string;
+            },
+        }
+        ```
+   - Based on `topic`, it requires payload's schema : 
+
+        ```ts
+        interface {
+            condition: string;
+            notification: {
+                title: string;
+                body: string;
+            },
+        }
+        ```
+
+Before start, please prepare send message function :
+
+```ts
+import * as admin from 'firebase-admin';
+
+@Injectable()
+export class MessagesService {
+
+    // ...
+
+    async send(msg: Messaging) {
+        try {
+            const result = await admin.messaging().send(msg)
+            .then((response) => ({ data: response, error: null }))
+            .catch((error) => ({ data: null, error }));
+
+            return result
+
+        } catch (error) {
+            return { data: null, error };
+        }
+    }
+}
+```
+
+Example service :
+
+```tsx
+@Injectable()
+export class MessagesService {
+    
+    // ...
+
+    async sendData(msg: MessageDataDto) {
+        return await this.send({
+            token: msg.token,
+            data: msg.data,
+        })
+    }
+
+    async sendDataWithTopic(msg: MessageDataWithTopicDto) {
+        return await this.send({
+            topic: msg.topic,
+            data: msg.data,
+        })
+    }
+
+    async sendNotificationWithTopic(msgWithTopic: MessageContentWithTopicDto) {
+        return await this.send({
+            condition: `\'${msgWithTopic.topic}\' in topics`,
+            notification: {
+                title: msgWithTopic.title,
+                body: msgWithTopic.body,
+            },
+        })
+    }
+
+    async sendNotification(msg: MessageContentDto) {
+        return await this.send({
+            token: msg.token,
+            notification: {
+                title: msg.title,
+                body: msg.body,
+            },
+        })
+    }
+}
+```
+
+Example usage (based on above service) :
+
+![client-receive-notification](../assets/client-receive-notification.png)
+
+In case you don't know client but plan to share data via specific topic :
+
+```sh
+curl --location 'https://nest-firebase-rltdb.vercel.app/messages/send/topic/notification' \
+--header 'x-api-key: tST7aid0.........................j4FKg=' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title": "Test",
+    "body": "Bom ja",
+    "topic": "TestFCM"
+}'
+```
+
+In case you known the client by refer to their `token` :
+
+```sh
+curl --location 'https://nest-firebase-rltdb.vercel.app/messages/send/client/notification' \
+--header 'x-api-key: tST7aid0.........................j4FKg=' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title": "Test",
+    "body": "Bom ja",
+    "token": "cb3-3GWvrhjUq-FsJPZTRY:APA91bGsfBciezti_WkG3NVrHg7GHWB8JEABbu22r9qUQpOmcMKflb3GcQOJGxlU2b5Zn_WV4TEIrlmPXHqKNtZx2jkIIcigEwPOeyWLG-fJjNNoOKiU63Z_8_kqEbHiV-3GrEkA-u2f"
+}'
 ```
