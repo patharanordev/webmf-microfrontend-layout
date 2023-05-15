@@ -1,5 +1,7 @@
 # **Firebase Cloud Message on Web**
 
+![fcm-flow](../assets/fcm-flow.png)
+
 ## **Notification**
 
 Firebase provides 2-ways to notice web browser's client :
