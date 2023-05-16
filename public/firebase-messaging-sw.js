@@ -4,6 +4,7 @@ importScripts('https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js');
 
 // Initialize the Firebase app in the service worker by passing the generated config
 const firebaseConfig = {
+  apiKey: "AIzaSyAnzzE1dZboGFo5V7PlWZgT6QdR4o_wi",
   projectId: "temp-bedee-rtdb",
   messagingSenderId: "766275633550",
 };
