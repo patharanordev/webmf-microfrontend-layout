@@ -27,7 +27,10 @@ Web application need send the token to server side to identify current client *(
 
 In server side, microservice will sending message to client based on the token.
 
-> **IMPORTANT**: In client side requires service worker file name  `firebase-messaging-sw.js`, it can handle notification message when user minimize browser or changed tab.
+> **IMPORTANT**: In client side requires service worker file name  `firebase-messaging-sw.js`, it can handle notification message when user minimize browser or changed tab. You neeed to know 2-things :
+>
+> - Client can see Firebase's configuration via browser's inspector.
+> - Keep `VAPID` key (from Firebase) secure, it used for identify client's app.
 
 ### **Example Initial/Config FCM**
 
