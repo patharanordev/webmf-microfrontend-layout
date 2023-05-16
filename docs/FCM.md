@@ -15,7 +15,7 @@ This method allows client side subscribe specific topic from server side via `Cl
 
 ![fcm-web-client-subscribe-topic](../assets/fcm-web-client-subscribe-topic.png)
 
-`Cloud Messaging API (Legacy)` of Google Cloud APIs allow you to unlimited subscriber but ***limit your topic to 2,000 topics per application***.
+`Cloud Messaging API (Legacy)` of Google Cloud APIs allow you to unlimited subscriber but ***limit your topic to 3,000 topics per application*** (for more detail, please refer to **Reference** to topic).
 
 ### **Sending message via client's token**
 
@@ -424,3 +424,7 @@ curl --location 'https://nest-firebase-rltdb.vercel.app/messages/send/client/not
     "token": "cb3-3GWvrhjUq-FsJPZTRY:APA91bGsfBciezti_WkG3NVrHg7GHWB8JEABbu22r9qUQpOmcMKflb3GcQOJGxlU2b5Zn_WV4TEIrlmPXHqKNtZx2jkIIcigEwPOeyWLG-fJjNNoOKiU63Z_8_kqEbHiV-3GrEkA-u2f"
 }'
 ```
+
+## **References**
+
+- [About FCM messages & limitation](https://firebase.google.com/docs/cloud-messaging/concept-options)
