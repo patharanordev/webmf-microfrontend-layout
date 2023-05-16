@@ -1,1 +1,0 @@
-cp public/firebase-messaging-sw.js dist/firebase-messaging-sw.js
